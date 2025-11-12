@@ -1,37 +1,49 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type FinancialAnalysis, type InsertFinancialAnalysis } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Financial Analysis methods
+  createAnalysis(analysis: InsertFinancialAnalysis): Promise<FinancialAnalysis>;
+  getAnalysis(id: string): Promise<FinancialAnalysis | undefined>;
+  getAllAnalyses(): Promise<FinancialAnalysis[]>;
+  updateAnalysis(id: string, updates: Partial<FinancialAnalysis>): Promise<FinancialAnalysis | undefined>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private analyses: Map<string, FinancialAnalysis>;
 
   constructor() {
-    this.users = new Map();
+    this.analyses = new Map();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async createAnalysis(insertAnalysis: InsertFinancialAnalysis): Promise<FinancialAnalysis> {
+    const id = randomUUID();
+    const analysis: FinancialAnalysis = {
+      ...insertAnalysis,
+      id,
+      uploadedAt: new Date(),
+    };
+    this.analyses.set(id, analysis);
+    return analysis;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
+  async getAnalysis(id: string): Promise<FinancialAnalysis | undefined> {
+    return this.analyses.get(id);
+  }
+
+  async getAllAnalyses(): Promise<FinancialAnalysis[]> {
+    return Array.from(this.analyses.values()).sort(
+      (a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()
     );
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateAnalysis(id: string, updates: Partial<FinancialAnalysis>): Promise<FinancialAnalysis | undefined> {
+    const existing = this.analyses.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...updates };
+    this.analyses.set(id, updated);
+    return updated;
   }
 }
 
