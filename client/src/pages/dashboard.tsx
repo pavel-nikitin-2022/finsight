@@ -136,7 +136,7 @@ export default function Dashboard() {
 
   const getGradeStyle = (grade: string | null) => {
     if (!grade) return {};
-    
+
     const styles = {
       "Покупать": {
         backgroundColor: "var(--vkui--color_background_positive)",
@@ -333,7 +333,7 @@ function MetricCard({
       <Div style={{ minHeight: "140px", display: "flex", flexDirection: "column", gap: "12px" }}>
         <div>{icon}</div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <Text weight="3" style={{ fontSize: "32px", marginBottom: "4px" }} data-testid={testId}>
+          <Text weight="3" style={{ fontSize: "28px", marginBottom: "4px" }} data-testid={testId}>
             {value}
           </Text>
           <Text style={{ fontSize: "13px", color: "var(--vkui--color_text_secondary)" }}>
